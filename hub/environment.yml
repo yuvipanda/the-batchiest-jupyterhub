@@ -1,9 +1,0 @@
-# Packages installed in the base environment
-dependencies:
-    - nodejs
-    - pip
-    # Use pip for all packages, to avoid mixing conda & pip packages
-    # Not all JupyterHub related packages are available in conda
-    - pip:
-        - jupyterhub
-        - jupyterhub-traefik-proxy
