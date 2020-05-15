@@ -63,13 +63,12 @@ def ensure_traefik_config(creds_path: pathlib.Path, config_path: pathlib.Path, s
             'ip': '127.0.0.1'
         },
         'http': {
-            'port': 80
+            'port': 8181
         },
         'https': {
             'port': 443,
             'enabled': False
         }
-
     }
 
     with open(os.path.join(os.path.dirname(__file__), "traefik.toml.tpl")) as f:
