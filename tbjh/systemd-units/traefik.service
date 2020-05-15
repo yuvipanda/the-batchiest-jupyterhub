@@ -1,0 +1,25 @@
+# Template file for Traefik systemd service
+# Uses simple string.format() for 'templating'
+[Unit]
+# Wait for network stack to be fully up before starting proxy
+After=network.target
+
+[Service]
+User=root
+Restart=always
+# traefik process should have no access to home directories
+ProtectHome=yes
+ProtectSystem=strict
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ReadWritePaths={install_prefix}/state/rules.toml
+ReadWritePaths={install_prefix}/state/acme.json
+WorkingDirectory={install_prefix}/state
+ExecStart={install_prefix}/hub/bin/traefik \
+            -c {install_prefix}/state/traefik.toml
+
+[Install]
+# Start service when system boots
+WantedBy=multi-user.target
