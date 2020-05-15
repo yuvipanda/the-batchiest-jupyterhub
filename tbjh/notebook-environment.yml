@@ -1,0 +1,11 @@
+name: notebook
+channels:
+- conda-forge
+dependencies:
+  - nodejs
+  - nb_conda_kernels
+  - pip:
+      - jupyterhub
+      - notebook
+      - jupyterlab
+      - ipykernel
