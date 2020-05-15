@@ -17,7 +17,7 @@ ProtectKernelModules=yes
 Environment=CONDA_DIR={install_prefix}
 # By default, /bin doesn't seem to be in PATH
 # batchspawner uses sudo, which is in /bin (at least on CentOS)
-Environment=$PATH:/bin
+Environment=PATH=$PATH:/bin
 # Run upgrade-db before starting, in case Hub version has changed
 # This is a no-op when no db exists or no upgrades are needed
 ExecStart={install_prefix}/bin/python3 -m jupyterhub.app -f {jupyterhub_config_path} --upgrade-db
