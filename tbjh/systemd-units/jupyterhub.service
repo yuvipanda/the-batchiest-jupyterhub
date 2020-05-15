@@ -1,0 +1,24 @@
+# Template file for JupyterHub systemd service
+# Uses simple string.format() for 'templating'
+[Unit]
+# Traefik must have successfully started *before* we launch JupyterHub
+Requires=traefik.service
+After=traefik.service
+
+[Service]
+User=root
+Restart=always
+WorkingDirectory={install_prefix}/var/jupyterhub
+# Protect bits that are normally shared across the system
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+Environment=CONDA_DIR={install_prefix}
+# Run upgrade-db before starting, in case Hub version has changed
+# This is a no-op when no db exists or no upgrades are needed
+ExecStart={install_prefix}/bin/python3 -m jupyterhub.app -f {jupyterhub_config_path} --upgrade-db
+
+[Install]
+# Start service when system boots
+WantedBy=multi-user.target
