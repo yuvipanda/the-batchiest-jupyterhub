@@ -20,7 +20,10 @@ setup(
         'jupyterhub-idle-culler==1.0',
         'jupyterhub-traefik-proxy==0.1.*',
         'batchspawner @ git+https://github.com/jupyterhub/batchspawner.git@33b4a7b5134c3645911f9adfb3c97839cc76e668',
+
+        'passlib',
         'backoff',
-        'requests'
+        'requests',
+        'jinja2'
     ]
 )

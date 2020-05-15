@@ -14,11 +14,11 @@ PrivateTmp=yes
 PrivateDevices=yes
 ProtectKernelTunables=yes
 ProtectKernelModules=yes
-ReadWritePaths={install_prefix}/state/rules.toml
-ReadWritePaths={install_prefix}/state/acme.json
-WorkingDirectory={install_prefix}/state
-ExecStart={install_prefix}/hub/bin/traefik \
-            -c {install_prefix}/state/traefik.toml
+ReadWritePaths={install_prefix}/var/jupyterhub/rules.toml
+ReadWritePaths={install_prefix}/var/jupyterhub/acme.json
+WorkingDirectory={install_prefix}/var/jupyterhub
+ExecStart={install_prefix}/bin/traefik \
+            -c {install_prefix}/etc/jupyterhub/traefik.toml
 
 [Install]
 # Start service when system boots
