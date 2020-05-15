@@ -6,3 +6,4 @@ dependencies:
     # Not all JupyterHub related packages are available in conda
     - pip:
         - jupyterhub
+        - jupyterhub-traefik-proxy
