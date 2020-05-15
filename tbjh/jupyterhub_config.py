@@ -14,6 +14,6 @@ c.TraefikTomlProxy.should_start = True
 
 # Load arbitrary .py config files if they exist.
 # This is our escape hatch
-extra_configs = sorted(glob(os.path.join(CONDA_DIR, 'etc', 'jupyterhub_config.d', '*.py')))
+extra_configs = sorted(glob(os.path.join(CONDA_DIR, 'etc', 'jupyterhub', 'jupyterhub_config.d', '*.py')))
 for ec in extra_configs:
     load_subconfig(ec)
