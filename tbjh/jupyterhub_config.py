@@ -6,11 +6,8 @@ import asyncio
 import subprocess
 from glob import glob
 from jupyterhub_traefik_proxy import TraefikTomlProxy
+from tbjh import constants
 
-HERE = pathlib.Path(__file__).absolute().parent
-
-# We require a version of python installed via conda
-CONDA_DIR = pathlib.Path(os.environ['CONDA_DIR'])
 
 # Don't kill servers when JupyterHub restarts
 c.JupyterHub.cleanup_servers = False
@@ -19,9 +16,7 @@ c.JupyterHub.cleanup_servers = False
 c.JupyterHub.proxy_class = TraefikTomlProxy
 c.TraefikTomlProxy.should_start = False
 
-# FIXME: This needs to be heavily de-duped
-traefik_creds_path = CONDA_DIR / "etc/jupyterhub/traefik-creds.json"
-with open(traefik_creds_path) as f:
+with open(constants.TRAEFIK_CREDS_PATH) as f:
     creds = json.load(f)
 
 if 'version' not in creds or creds['version'] != 'v1':
@@ -48,8 +43,6 @@ async def check_call_process(cmd):
             output=stdout
         )
 
-MINIFORGE_INSTALLER_PATH = CONDA_DIR / "share/jupyterhub/miniforge-installer.sh"
-NOTEBOOK_ENVIRONMENT_YML = HERE / "notebook-environment.yml"
 
 
 # Make sure there's a conda install
@@ -65,7 +58,7 @@ async def pre_spawn_hook(spawner):
     # FIXME: Show this as progress in spawn call
     await check_call_process([
         '/bin/sh',
-        str(MINIFORGE_INSTALLER_PATH),
+        str(constants.MINIFORGE_INSTALLER_PATH),
         '-b', '-p', str(homedir / 'conda'),
     ])
 
@@ -73,12 +66,13 @@ async def pre_spawn_hook(spawner):
     await check_call_process([
         str(homedir / 'conda/bin/conda'),
         'env', 'create',
-        '-f', str(NOTEBOOK_ENVIRONMENT_YML)
+        '-f', str(constants.NOTEBOOK_ENVIRONMENT_YML)
     ])
 
 c.Spawner.pre_spawn_hook = pre_spawn_hook
+
 # Load arbitrary .py config files if they exist.
 # This is our escape hatch
-extra_configs = sorted(glob(os.path.join(CONDA_DIR, 'etc', 'jupyterhub', 'jupyterhub_config.d', '*.py')))
+extra_configs = sorted(glob(os.path.join(constants.JUPYTERHUB_CONFIG_D_DIR, '*.py')))
 for ec in extra_configs:
     load_subconfig(ec)

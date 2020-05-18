@@ -7,10 +7,7 @@ from jupyterhub_traefik_proxy.install import install_traefik
 from passlib.apache import HtpasswdFile
 from jinja2 import Template
 from urllib.request import urlretrieve
-
-HERE = pathlib.Path(__file__).absolute().parent
-CONDA_DIR = pathlib.Path(os.environ['CONDA_DIR'])
-CONFIG_DIR = CONDA_DIR / "etc/jupyterhub"
+from tbjh import constants
 
 
 def ensure_traefik_credentials(path: pathlib.Path):
@@ -72,7 +69,7 @@ def ensure_traefik_config(creds_path: pathlib.Path, config_path: pathlib.Path, s
         }
     }
 
-    with open(os.path.join(os.path.dirname(__file__), "traefik.toml.tpl")) as f:
+    with open(HERE / "traefik.toml.tpl") as f:
         template = Template(f.read())
 
     new_toml = template.render(config)
@@ -99,14 +96,15 @@ def install_unit(name: str, unit: str, systemd_unit_path='/etc/systemd/system'):
 
 def main():
     # Traefik binary should be installed
-    install_traefik(CONDA_DIR / 'bin', f'{sys.platform}-amd64', '1.7.18')
+    install_traefik(constants.BIN_DIR, f'{sys.platform}-amd64', '1.7.18')
+
     # All our config should be here
-    os.makedirs(CONFIG_DIR, exist_ok=True)
+    os.makedirs(constants.CONFIG_DIR, exist_ok=True)
     # Subdirectory where we look for config items is created
-    os.makedirs(CONFIG_DIR / 'jupyterhub_config.d', exist_ok=True)
+    os.makedirs(constants.JUPYTERHUB_CONFIG_D_DIR, exist_ok=True)
 
     # Subdirectory with db, state files
-    os.makedirs(CONDA_DIR / 'var/jupyterhub', exist_ok=True)
+    os.makedirs(constants.STATE_DIR, exist_ok=True)
 
 
     with open(HERE / 'systemd-units/jupyterhub.service') as f:
@@ -116,14 +114,12 @@ def main():
         )
         install_unit('jupyterhub', hub_unit)
 
-    # Generate stable traefik credentials file
-    traefik_creds_path = CONFIG_DIR / "traefik-creds.json"
-    ensure_traefik_credentials(traefik_creds_path)
+    ensure_traefik_credentials(constants.TRAEFIK_CREDS_PATH)
 
     ensure_traefik_config(
-        traefik_creds_path,
-        CONFIG_DIR / "traefik.toml",
-        CONDA_DIR / "var/jupyterhub"
+        constants.TRAEFIK_CREDS_PATH,
+        constants.CONFIG_DIR / "traefik.toml",
+        constants.STATE_DIR
     )
 
     with open(HERE / 'systemd-units/traefik.service') as f:
@@ -133,14 +129,9 @@ def main():
         install_unit('traefik', traefik_unit)
 
     # Download miniforge installer into a place `jupyterhub_config.py` can find
-    # FIXME: Make this configurable
     # FIXME: Retry this download
     # FIXME: Validate SHA of download
-    miniforge_installer_path = CONDA_DIR / 'share/jupyterhub/miniforge-installer.sh'
-    miniforge_version = "4.8.3-2"
-    miniforge_url = f"https://github.com/conda-forge/miniforge/releases/download/{miniforge_version}/Miniforge3-{miniforge_version}-Linux-x86_64.sh"
-
-    urlretrieve(miniforge_url, miniforge_installer_path)
+    urlretrieve(constants.MINIFORGE_URL, constants.MINIFORGE_INSTALLER_PATH)
 
 
 if __name__ == '__main__':
