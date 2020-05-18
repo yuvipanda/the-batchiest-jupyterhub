@@ -9,3 +9,4 @@ dependencies:
       - notebook
       - jupyterlab
       - ipykernel
+      - jupyterlab
