@@ -136,7 +136,7 @@ def main():
     # FIXME: Make this configurable
     # FIXME: Retry this download
     # FIXME: Validate SHA of download
-    miniforge_installer_path = CONDA_DIR / 'share/jupyterhub/install-miniforge.sh'
+    miniforge_installer_path = CONDA_DIR / 'share/jupyterhub/miniforge-installer.sh'
     miniforge_version = "4.8.3-2"
     miniforge_url = f"https://github.com/conda-forge/miniforge/releases/download/{miniforge_version}/Miniforge3-{miniforge_version}-Linux-x86_64.sh"
 
