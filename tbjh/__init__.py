@@ -6,6 +6,7 @@ import secrets
 from jupyterhub_traefik_proxy.install import install_traefik
 from passlib.apache import HtpasswdFile
 from jinja2 import Template
+from urllib.request import urlretrieve
 
 HERE = pathlib.Path(__file__).absolute().parent
 CONDA_DIR = pathlib.Path(os.environ['CONDA_DIR'])
@@ -131,6 +132,15 @@ def main():
         )
         install_unit('traefik', traefik_unit)
 
+    # Download miniforge installer into a place `jupyterhub_config.py` can find
+    # FIXME: Make this configurable
+    # FIXME: Retry this download
+    # FIXME: Validate SHA of download
+    miniforge_installer_path = CONDA_DIR / 'share/jupyterhub/install-miniforge.sh'
+    miniforge_version = "4.8.3-2"
+    miniforge_url = f"https://github.com/conda-forge/miniforge/releases/download/{miniforge_version}/Miniforge3-{miniforge_version}-Linux-x86_64.sh"
+
+    urlretrieve(miniforge_url, miniforge_installer_path)
 
 
 if __name__ == '__main__':

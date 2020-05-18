@@ -30,7 +30,7 @@ if 'version' not in creds or creds['version'] != 'v1':
 c.TraefikTomlProxy.traefik_api_username = creds['username']
 c.TraefikTomlProxy.traefik_api_password = creds['password']
 
-MINIFORGE_INSTALLER_PATH = HERE / "miniforge-installer.sh"
+MINIFORGE_INSTALLER_PATH = CONDA_DIR / "share/jupyterhub/miniforge-installer.sh"
 NOTEBOOK_ENVIRONMENT_YML = HERE / "notebook-environment.yml"
 
 # Make sure there's a conda install
