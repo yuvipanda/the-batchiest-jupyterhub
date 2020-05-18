@@ -130,7 +130,7 @@ def main():
 
     # Download miniforge installer into a place `jupyterhub_config.py` can find
     # FIXME: Retry this download
-    # FIXME: Validate SHA of download
+    # FIXME: Validate SHA of download, so we don't have to re-download
     urlretrieve(constants.MINIFORGE_URL, constants.MINIFORGE_INSTALLER_PATH)
 
 
