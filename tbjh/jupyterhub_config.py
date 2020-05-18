@@ -3,6 +3,7 @@ import pwd
 import os
 import pathlib
 import asyncio
+import subprocess
 from glob import glob
 from jupyterhub_traefik_proxy import TraefikTomlProxy
 
@@ -30,8 +31,26 @@ if 'version' not in creds or creds['version'] != 'v1':
 c.TraefikTomlProxy.traefik_api_username = creds['username']
 c.TraefikTomlProxy.traefik_api_password = creds['password']
 
+async def check_call_process(cmd):
+    """
+    Asynchronously execute a process, throw an error when it fails
+    """
+    proc = await asyncio.create_subprocess_exec(
+        *cmd,
+        stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+    )
+    stdout, stderr = await proc.communicate()
+    if proc.returncode != 0:
+        raise subprocess.CalledProcessError(
+            returncode=proc.returncode,
+            cmd=cmd,
+            stderr=stderr,
+            output=stdout
+        )
+
 MINIFORGE_INSTALLER_PATH = CONDA_DIR / "share/jupyterhub/miniforge-installer.sh"
 NOTEBOOK_ENVIRONMENT_YML = HERE / "notebook-environment.yml"
+
 
 # Make sure there's a conda install
 async def pre_spawn_hook(spawner):
@@ -41,22 +60,21 @@ async def pre_spawn_hook(spawner):
         # If 'conda' dir exists, assume we are good
         # In the future, we might have more sophisticated checks
         return
+
     # Install miniforge
-    installer_proc = await asyncio.create_subprocess_exec(
+    # FIXME: Show this as progress in spawn call
+    await check_call_process([
         '/bin/sh',
         str(MINIFORGE_INSTALLER_PATH),
-        '-b', '-p', str(homedir / 'conda')
-    )
-    await installer_proc.wait()
+        '-b', '-p', str(homedir / 'conda'),
+    ])
 
     # Install packages we want
-    package_proc = await asyncio.create_subprocess_exec(
+    await check_call_process([
         str(homedir / 'conda/bin/conda'),
         'env', 'create',
         '-f', str(NOTEBOOK_ENVIRONMENT_YML)
-    )
-
-    await package_proc.wait()
+    ])
 
 c.Spawner.pre_spawn_hook = pre_spawn_hook
 # Load arbitrary .py config files if they exist.
