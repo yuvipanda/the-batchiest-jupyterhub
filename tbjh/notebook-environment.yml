@@ -10,3 +10,4 @@ dependencies:
       - jupyterlab
       - ipykernel
       - jupyterlab
+      - git+https://github.com/jupyterhub/batchspawner.git@33b4a7b5134c3645911f9adfb3c97839cc76e668
