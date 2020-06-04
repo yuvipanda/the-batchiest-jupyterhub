@@ -2,6 +2,7 @@
 Common constants used by configurer & jupyterhub_config.py
 """
 
+import os
 import pathlib
 
 
@@ -20,7 +21,7 @@ TRAEFIK_CREDS_PATH = CONDA_DIR / "etc/jupyterhub/traefik-creds.json"
 # The miniforge installer file
 MINIFORGE_INSTALLER_PATH = CONDA_DIR / "share/jupyterhub/miniforge-installer.sh"
 MINIFORGE_VERSION = "4.8.3-2"
-MINIFORGE_URL = f"https://github.com/conda-forge/miniforge/releases/download/{miniforge_version}/Miniforge3-{miniforge_version}-Linux-x86_64.sh"
+MINIFORGE_URL = f"https://github.com/conda-forge/miniforge/releases/download/{MINIFORGE_VERSION}/Miniforge3-{MINIFORGE_VERSION}-Linux-x86_64.sh"
 
 # environment.yml used to install base notebook + dependencies
 NOTEBOOK_ENVIRONMENT_YML = HERE / "notebook-environment.yml"
